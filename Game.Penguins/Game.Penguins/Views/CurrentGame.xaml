@@ -1,0 +1,82 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Game.Penguins.Views"
+                    xmlns:hx="clr-namespace:HexGridControl;assembly=HexGridControl"   
+                    xmlns:viewModels="clr-namespace:Game.Penguins.ViewModels">
+
+    <DataTemplate DataType="{x:Type viewModels:CurrentGameViewModel}">
+        <DataTemplate.Resources>
+            <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+        </DataTemplate.Resources>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <hx:HexList Margin="5"
+                    RowCount="8" 
+                    ColumnCount="8"
+                    Grid.Column="0"
+                    Width="840"
+                    Height="700"
+                    Orientation="Vertical"
+                    ItemsSource="{Binding Cells}">
+                <hx:HexList.ItemContainerStyle>
+                    <Style TargetType="{x:Type hx:HexItem}">
+                        <Setter Property="Grid.Row" Value="{Binding Path=Y}"/>
+                        <Setter Property="Grid.Column" Value="{Binding Path=X}"/>
+                        <Setter Property="BorderThickness" Value="0.6"/>
+                        <Setter Property="BorderBrush" Value="LightGray"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="Background" Value="White"/>
+                    </Style>
+                </hx:HexList.ItemContainerStyle>
+                <hx:HexList.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Image Source="/Ressources/ice.png" Stretch="UniformToFill" Width="70" Height="70"
+                                Visibility="{Binding Path=IsIce, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/fish1.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsOnePoint, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/fish2.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsTwoPoint, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/fish3.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsThreePoint, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/blue.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsBlue, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/red.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsRed, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/yellow.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsYellow, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <Image Source="/Ressources/green.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsGreen, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                        </Grid>
+                    </DataTemplate>
+                </hx:HexList.ItemTemplate>
+            </hx:HexList>
+            <StackPanel Grid.Column="1">
+                <StackPanel Margin="10">
+                    <!--Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                    <Label Content="Player :"></Label>
+                    <Label Content="{Binding CurrentPlayerName}"></Label>
+                </StackPanel>
+                <StackPanel><!--Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                    <Label Content="Place your penguin on the map by selecting a card."></Label>
+                    <Label Content="Then click on the button below :."></Label>
+                    <Button Command="{Binding PlacePenguinCommand}" Content="Place"></Button>
+                </StackPanel>
+                <StackPanel><!--Visibility="{Binding Path=IsMoveMyPenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                    <Label Content="It's your turn."></Label>
+                    <Label Content="Select a penguin (from yours) on the map, then select a card destination."></Label>
+                    <Label Content="Once your selected origin and destination, clisk on the button below."></Label>
+                    <Button Command="{Binding PlacePenguinCommand}" Content="Move it !"></Button>
+                </StackPanel>
+                <StackPanel><!--Visibility="{Binding Path=IsPlayAIAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                    <Label Content="It's the turn of the next player (an AI)."></Label>
+                    <Label Content="Click on the button below in order to play."></Label>
+                    <Button Command="{Binding PlayAICommand}" Content="Play"></Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>
