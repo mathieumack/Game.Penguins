@@ -2,7 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Game.Penguins.Views"
                     xmlns:hx="clr-namespace:HexGridControl;assembly=HexGridControl"   
+                    xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
                     xmlns:viewModels="clr-namespace:Game.Penguins.ViewModels">
+
+    <Style x:Key="ItemGroupLabelStyle" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Margin" Value="{adonisUi:Space 0, 2, 0, 0.5}"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
 
     <DataTemplate DataType="{x:Type viewModels:CurrentGameViewModel}">
         <DataTemplate.Resources>
@@ -17,8 +26,9 @@
                     RowCount="8" 
                     ColumnCount="8"
                     Grid.Column="0"
-                    Width="840"
-                    Height="700"
+                    Width="750"
+                    Height="600"
+                    SelectedItem="{Binding SelectedCell}"
                     Orientation="Vertical"
                     ItemsSource="{Binding Cells}">
                 <hx:HexList.ItemContainerStyle>
@@ -29,6 +39,16 @@
                         <Setter Property="BorderBrush" Value="LightGray"/>
                         <Setter Property="FontSize" Value="16"/>
                         <Setter Property="Background" Value="White"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsSelectedFirst}" Value="True">
+                                <Setter Property="BorderBrush" Value="BlueViolet" />
+                                <Setter Property="BorderThickness" Value="1.2" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsSelectedSecond}" Value="True">
+                                <Setter Property="BorderBrush" Value="LawnGreen" />
+                                <Setter Property="BorderThickness" Value="1.2" />
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </hx:HexList.ItemContainerStyle>
                 <hx:HexList.ItemTemplate>
@@ -56,22 +76,27 @@
             </hx:HexList>
             <StackPanel Grid.Column="1">
                 <StackPanel Margin="10">
-                    <!--Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
                     <Label Content="Player :"></Label>
-                    <Label Content="{Binding CurrentPlayerName}"></Label>
+                    <Label Content="{Binding CurrentPlayerName}"
+                           Style="{StaticResource ItemGroupLabelStyle}"></Label>
                 </StackPanel>
-                <StackPanel><!--Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                <StackPanel Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="Place your penguin on the map by selecting a card."></Label>
                     <Label Content="Then click on the button below :."></Label>
                     <Button Command="{Binding PlacePenguinCommand}" Content="Place"></Button>
                 </StackPanel>
-                <StackPanel><!--Visibility="{Binding Path=IsMoveMyPenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                <StackPanel Visibility="{Binding Path=IsPlacePenguinAIAction, Converter={StaticResource VisibleIfTrueConverter}}">
+                    <Label Content="The AI must place his penguin."></Label>
+                    <Label Content="Then click on the button below to continue :"></Label>
+                    <Button Command="{Binding PlayAICommand}" Content="Place"></Button>
+                </StackPanel>
+                <StackPanel Visibility="{Binding Path=IsMoveMyPenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's your turn."></Label>
                     <Label Content="Select a penguin (from yours) on the map, then select a card destination."></Label>
                     <Label Content="Once your selected origin and destination, clisk on the button below."></Label>
                     <Button Command="{Binding PlacePenguinCommand}" Content="Move it !"></Button>
                 </StackPanel>
-                <StackPanel><!--Visibility="{Binding Path=IsPlayAIAction, Converter={StaticResource VisibleIfTrueConverter}}">-->
+                <StackPanel Visibility="{Binding Path=IsMovePenguinAIAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's the turn of the next player (an AI)."></Label>
                     <Label Content="Click on the button below in order to play."></Label>
                     <Button Command="{Binding PlayAICommand}" Content="Play"></Button>

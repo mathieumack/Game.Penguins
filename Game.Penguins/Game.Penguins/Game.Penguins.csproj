@@ -67,6 +67,8 @@
     <Compile Include="Commands\ApplicationNextViewCommand.cs" />
     <Compile Include="Commands\ApplicationPreviousViewCommand.cs" />
     <Compile Include="Commands\ApplicationToggleIsEnabledCommand.cs" />
+    <Compile Include="Commands\PlacePenguinViewModelCommand.cs" />
+    <Compile Include="Commands\PlayAIViewModelCommand.cs" />
     <Compile Include="Extensions\ToPlayerTypeExtension.cs" />
     <Compile Include="FakeGame\FakeClasses.cs" />
     <Compile Include="Framework\Command.cs" />
