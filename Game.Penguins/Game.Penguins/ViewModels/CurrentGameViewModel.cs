@@ -47,6 +47,13 @@ namespace Game.Penguins.ViewModels
                 if (value == null || game.CurrentPlayer.PlayerType != PlayerType.Human)
                     return;
 
+                //// Check that the select is valid :
+                //if (game.NextAction == NextActionType.MovePenguin && selectFirst && value.Cell.CellType != CellType.FishWithPenguin)
+                //    return;
+
+                //if (game.NextAction == NextActionType.MovePenguin && !selectFirst && value.Cell.CellType != CellType.Fish)
+                //    return;
+
                 // A cell is selected :
                 if (selectFirst)
                 {
@@ -198,6 +205,7 @@ namespace Game.Penguins.ViewModels
         {
             if (SelectedCell != null)
             {
+                selectedFirst = SelectedCell;
                 selectFirst = false;
             }
         }
@@ -206,6 +214,7 @@ namespace Game.Penguins.ViewModels
         {
             if (SelectedCell != null)
             {
+                selectedSecond = SelectedCell;
                 game.MoveManual(selectedFirst.Cell, selectedSecond.Cell);
 
                 selectedFirst = null;
@@ -269,8 +278,13 @@ namespace Game.Penguins.ViewModels
         /// </summary>
         private void CheckActions()
         {
+            foreach (var cell in Cells)
+            {
+                cell.IsSelectedFirst = false;
+                cell.IsSelectedSecond = false;
+            }
+
             selectFirst = true;
-            SelectedCell = null;
 
             CurrentPlayerName = game.CurrentPlayer.Name;
 
