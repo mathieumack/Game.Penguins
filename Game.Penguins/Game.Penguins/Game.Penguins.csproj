@@ -67,6 +67,8 @@
     <Compile Include="Commands\ApplicationNextViewCommand.cs" />
     <Compile Include="Commands\ApplicationPreviousViewCommand.cs" />
     <Compile Include="Commands\ApplicationToggleIsEnabledCommand.cs" />
+    <Compile Include="Commands\MovePenguinSelectorViewModelCommand.cs" />
+    <Compile Include="Commands\MovePenguinValidationViewModel.cs" />
     <Compile Include="Commands\PlacePenguinViewModelCommand.cs" />
     <Compile Include="Commands\PlayAIViewModelCommand.cs" />
     <Compile Include="Extensions\ToPlayerTypeExtension.cs" />

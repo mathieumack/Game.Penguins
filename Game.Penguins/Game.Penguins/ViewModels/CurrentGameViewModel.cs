@@ -44,7 +44,7 @@ namespace Game.Penguins.ViewModels
             }
             set
             {
-                if (value == null)
+                if (value == null || game.CurrentPlayer.PlayerType != PlayerType.Human)
                     return;
 
                 // A cell is selected :
@@ -161,6 +161,22 @@ namespace Game.Penguins.ViewModels
             }
         }
 
+        public MovePenguinSelectorViewModelCommand MovePenguinSelectorCommand
+        {
+            get
+            {
+                return new MovePenguinSelectorViewModelCommand(this);
+            }
+        }
+
+        public MovePenguinValidationViewModel MovePenguinValidationViewModel
+        {
+            get
+            {
+                return new MovePenguinValidationViewModel(this);
+            }
+        }
+
         public void PlayPlacePenguinHuman()
         {
             game.PlacePenguinManual(SelectedCell.X, SelectedCell.Y);
@@ -176,6 +192,27 @@ namespace Game.Penguins.ViewModels
                 game.Move();
 
             CheckActions();
+        }
+
+        public void SelectedOriginPenguin()
+        {
+            if (SelectedCell != null)
+            {
+                selectFirst = false;
+            }
+        }
+
+        public void MovePenguinHuman()
+        {
+            if (SelectedCell != null)
+            {
+                game.MoveManual(selectedFirst.Cell, selectedSecond.Cell);
+
+                selectedFirst = null;
+                selectedSecond = null;
+
+                CheckActions();
+            }
         }
 
         #endregion
@@ -196,7 +233,6 @@ namespace Game.Penguins.ViewModels
         private void Game_StateChanged(object sender, EventArgs e)
         {
             CheckActions();
-            CurrentPlayerName = game.CurrentPlayer.Name;
         }
 
         /// <summary>
@@ -235,6 +271,8 @@ namespace Game.Penguins.ViewModels
         {
             selectFirst = true;
             SelectedCell = null;
+
+            CurrentPlayerName = game.CurrentPlayer.Name;
 
             IsPlacePenguinAIAction = game.NextAction == NextActionType.PlacePenguin && 
                                         game.CurrentPlayer.PlayerType != PlayerType.Human;
