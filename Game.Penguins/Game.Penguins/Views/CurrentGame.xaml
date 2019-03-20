@@ -76,7 +76,32 @@
             </hx:HexList>
             <StackPanel Grid.Column="1">
                 <StackPanel Margin="10">
-                    <Label Content="Player :"></Label>
+                    <Label Content="Scores :"></Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Name" Grid.Column="0"></Label>
+                        <Label Content="Points" Grid.Column="1"></Label>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Players}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="{Binding PlayerName}" Grid.Column="0"></Label>
+                                    <Label Content="{Binding Points}" Grid.Column="1"></Label>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                <StackPanel Margin="10">
+                    <Label Content="Current player :"></Label>
                     <Label Content="{Binding CurrentPlayerName}"
                            Style="{StaticResource ItemGroupLabelStyle}"></Label>
                 </StackPanel>

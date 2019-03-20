@@ -81,6 +81,7 @@
     <Compile Include="ViewModels\ConfigurationPlayer.cs" />
     <Compile Include="ViewModels\CurrentGameViewModel.cs" />
     <Compile Include="ViewModels\IApplicationContentView.cs" />
+    <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\WelcomeScreenViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

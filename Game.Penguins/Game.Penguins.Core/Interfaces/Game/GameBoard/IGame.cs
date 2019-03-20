@@ -40,7 +40,7 @@ namespace Game.Penguins.Core.Interfaces.Game.GameBoard
         /// </summary>
         /// <param name="playerName"></param>
         /// <param name="playerType"></param>
-        void AddPlayer(string playerName, PlayerType playerType);
+        IPlayer AddPlayer(string playerName, PlayerType playerType);
 
         /// <summary>
         /// Start the game
