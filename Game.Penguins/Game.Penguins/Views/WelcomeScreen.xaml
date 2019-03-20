@@ -59,7 +59,7 @@
                                 <Label Content="Type :" Margin="{adonisUi:Space 0, 0, 3, 0}" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Text=""
                                           IsEnabled="False"
-                                          SelectedValue="{Binding Player1Type}"
+                                          SelectedItem="{Binding Player1Type}"
                                           adonisExtensions:WatermarkExtension.Watermark="Select an option"
                                           SelectedIndex="0"
                                           Grid.Column="1">
@@ -99,7 +99,7 @@
 
                                 <Label Content="Type :" Margin="{adonisUi:Space 0, 0, 3, 0}" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Text=""
-                                          SelectedValue="{Binding Player2Type}"
+                                          SelectedItem="{Binding Player2Type}"
                                           adonisExtensions:WatermarkExtension.Watermark="Select an option"
                                           SelectedIndex="0"
                                           Grid.Column="1">
@@ -139,7 +139,7 @@
 
                                 <Label Content="Type :" Margin="{adonisUi:Space 0, 0, 3, 0}" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Text=""
-                                          SelectedValue="{Binding Player3Type}"
+                                          SelectedItem="{Binding Player3Type}"
                                           adonisExtensions:WatermarkExtension.Watermark="Select an option"
                                           SelectedIndex="0"
                                           Grid.Column="1">
@@ -180,7 +180,7 @@
 
                                 <Label Content="Type :" Margin="{adonisUi:Space 0, 0, 3, 0}" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Text=""
-                                          SelectedValue="{Binding Player4Type}"
+                                          SelectedItem="{Binding Player4Type}"
                                           adonisExtensions:WatermarkExtension.Watermark="Select an option"
                                           SelectedIndex="0"
                                           Grid.Column="1">

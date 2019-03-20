@@ -57,14 +57,14 @@ namespace Game.Penguins.Core.Interfaces.Game.GameBoard
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        void PlacePinguinManual(int x, int y);
+        void PlacePenguinManual(int x, int y);
 
         /// <summary>
         /// Call the AI to place his penguin
         /// </summary>
         /// <param name="playerName"></param>
         /// <param name="playerType"></param>
-        void PlacePinguin();
+        void PlacePenguin();
 
         #endregion
 

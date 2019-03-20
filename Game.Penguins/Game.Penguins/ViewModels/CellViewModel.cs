@@ -16,6 +16,34 @@ namespace Game.Penguins.ViewModels
 
         public bool IsIce { get; private set; }
 
+        private bool isSelectedFirst;
+        public bool IsSelectedFirst
+        {
+            get => isSelectedFirst;
+            set
+            {
+                if (isSelectedFirst != value)
+                {
+                    isSelectedFirst = value;
+                    RaisePropertyChanged(nameof(IsSelectedFirst));
+                }
+            }
+        }
+
+        private bool isSelectedSecond;
+        public bool IsSelectedSecond
+        {
+            get => isSelectedSecond;
+            set
+            {
+                if (isSelectedSecond != value)
+                {
+                    isSelectedSecond = value;
+                    RaisePropertyChanged(nameof(IsSelectedSecond));
+                }
+            }
+        }
+
         #region Fish points
 
         public bool IsOnePoint { get; private set; }

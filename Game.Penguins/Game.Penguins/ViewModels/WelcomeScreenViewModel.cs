@@ -4,6 +4,7 @@ using Game.Penguins.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace Game.Penguins.ViewModels
 {
@@ -32,7 +33,7 @@ namespace Game.Penguins.ViewModels
             }
         }
 
-        public string Player1Type { get; set; } = "Human";
+        public ComboBoxItem Player1Type { get; set; }
 
         private string player2Name = "Player 2";
         public string Player2Name
@@ -51,7 +52,7 @@ namespace Game.Penguins.ViewModels
             }
         }
 
-        public string Player2Type { get; set; }
+        public ComboBoxItem Player2Type { get; set; }
 
         private string player3Name = "Player 3";
         public string Player3Name
@@ -70,7 +71,7 @@ namespace Game.Penguins.ViewModels
             }
         }
 
-        public string Player3Type { get; set; }
+        public ComboBoxItem Player3Type { get; set; }
 
         private string player4Name = "Player 4";
         public string Player4Name
@@ -89,7 +90,7 @@ namespace Game.Penguins.ViewModels
             }
         }
 
-        public string Player4Type { get; set; }
+        public ComboBoxItem Player4Type { get; set; }
 
         private ConfigurationPlayer GetConfigurationPlayer(string playerName, string playerType)
         {
@@ -150,13 +151,13 @@ namespace Game.Penguins.ViewModels
             {
                 var players = new List<ConfigurationPlayer>()
                 {
-                    GetConfigurationPlayer(Player1Name, Player1Type),
-                    GetConfigurationPlayer(Player2Name, Player2Type)
+                    GetConfigurationPlayer(Player1Name, Player1Type.Content.ToString()),
+                    GetConfigurationPlayer(Player2Name, Player2Type.Content.ToString())
                 };
-                if(Player3Type != "None")
-                    players.Add(GetConfigurationPlayer(Player3Name, Player3Type));
-                if (Player4Type != "None")
-                    players.Add(GetConfigurationPlayer(Player4Name, Player4Type));
+                if(Player3Type.Content.ToString() != "None")
+                    players.Add(GetConfigurationPlayer(Player3Name, Player3Type.Content.ToString()));
+                if (Player4Type.Content.ToString() != "None")
+                    players.Add(GetConfigurationPlayer(Player4Name, Player4Type.Content.ToString()));
 
                 return new CurrentGameViewModel(players);
             }
