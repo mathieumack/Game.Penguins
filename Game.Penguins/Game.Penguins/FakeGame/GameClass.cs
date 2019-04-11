@@ -26,6 +26,28 @@ namespace Game.Penguins
 
         public event EventHandler StateChanged;
 
+        public int PenguinsByPlayer { get; set; }
+
+        public int Turn { get; set; }
+
+        public int NumberOfPenguins()
+        {
+            if (Players.Count() == 2)
+            {
+                PenguinsByPlayer = 4;
+            } 
+            else if (Players.Count() == 3)
+            {
+                PenguinsByPlayer = 3;
+            }
+            else if (Players.Count() == 4)
+            {
+                PenguinsByPlayer = 2;
+            }
+
+            return PenguinsByPlayer;
+        }
+
         public IPlayer AddPlayer(string playerName, PlayerType playerType)
         {
             PlayerColor color = ChoosePlayerColor();
@@ -78,15 +100,36 @@ namespace Game.Penguins
             cell.CurrentPenguin = new Penguins(CurrentPlayer);
 
             NextAction = NextActionType.PlacePenguin;
+            if (Turn == Players.Count() * PenguinsByPlayer)
+            {
+                NextAction = NextActionType.MovePenguin;
+            }
+
+            Turn++;
+            NextPlayer();
             cell.ChangeState();
             StateChanged.Invoke(this, null);
         }
 
         public void StartGame()
         {
+            Turn = 1;
             CurrentPlayer = Players[0];
+            PenguinsByPlayer = NumberOfPenguins();
             NextAction = NextActionType.PlacePenguin;
             StateChanged.Invoke(this, null);
+        }
+
+        public void NextPlayer()
+        {
+            int nextPlayerIndex = Players.IndexOf(CurrentPlayer) + 1;
+
+            if(nextPlayerIndex == Players.Count())
+            {
+                nextPlayerIndex = 0;
+            }
+
+            CurrentPlayer = Players[nextPlayerIndex];
         }
     }
 }
