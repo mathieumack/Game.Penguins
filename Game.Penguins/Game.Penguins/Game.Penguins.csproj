@@ -72,11 +72,11 @@
     <Compile Include="Commands\PlacePenguinViewModelCommand.cs" />
     <Compile Include="Commands\PlayAIViewModelCommand.cs" />
     <Compile Include="Extensions\ToPlayerTypeExtension.cs" />
-    <Compile Include="FakeGame\FakeBoard.cs" />
-    <Compile Include="FakeGame\FakeCell.cs" />
-    <Compile Include="FakeGame\FakeClasses.cs" />
-    <Compile Include="FakeGame\FakePenguin.cs" />
-    <Compile Include="FakeGame\FakePlayer.cs" />
+    <Compile Include="FakeGame\BoardClass.cs" />
+    <Compile Include="FakeGame\Cell.cs" />
+    <Compile Include="FakeGame\GameClass.cs" />
+    <Compile Include="FakeGame\Penguins.cs" />
+    <Compile Include="FakeGame\PlayerClass.cs" />
     <Compile Include="Framework\Command.cs" />
     <Compile Include="Framework\ViewModel.cs" />
     <Compile Include="Framework\ViewModelCommand.cs" />
@@ -148,9 +148,9 @@
       <Project>{80c125c4-2e4e-4ab0-a0a0-f084808683dd}</Project>
       <Name>Game.Penguins.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Game.Penguins.Helper\Game.Penguins.Helpers.csproj">
-      <Project>{a1071552-4b40-4e34-987e-3e0c21107154}</Project>
-      <Name>Game.Penguins.Helpers</Name>
+    <ProjectReference Include="..\Game.Penguins.Helper\Game.Penguins.Helper.csproj">
+      <Project>{4dcab8f8-e8a7-40f4-8734-3bc620ae2c13}</Project>
+      <Name>Game.Penguins.Helper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -170,5 +170,9 @@
     <Resource Include="Ressources\red.png" />
     <Resource Include="Ressources\yellow.png" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
