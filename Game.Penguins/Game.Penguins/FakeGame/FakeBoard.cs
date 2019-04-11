@@ -12,13 +12,14 @@ namespace Game.Penguins
         public FakeBoard()
         {
             Board = new FakeCell[8,8];
-            /*for (int i = 0; i < 8; i++)
+
+            for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
                     Board[i, j] = new FakeCell();
                 }
-            }*/
+            }
         }
 
         /// <summary>

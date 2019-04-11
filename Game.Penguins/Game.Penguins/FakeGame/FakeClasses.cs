@@ -11,6 +11,7 @@ namespace Game.Penguins
         public FakeClasses()
         {
             Board = new FakeBoard();
+            Players = new List<IPlayer>();
         }
 
         /// <summary>
