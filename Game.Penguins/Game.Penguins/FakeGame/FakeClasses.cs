@@ -13,7 +13,7 @@ namespace Game.Penguins
             Board = new FakeBoard();
             Players = new List<IPlayer>();
         }
-
+        
         /// <summary>
         /// Current state of the board
         /// </summary>
@@ -27,7 +27,7 @@ namespace Game.Penguins
         /// <summary>
         /// Get informations about the current user that needs to play
         /// </summary>
-        public IPlayer CurrentPlayer { get; }
+        public IPlayer CurrentPlayer { get; set; }
 
         /// <summary>
         /// Informations about players
@@ -59,7 +59,7 @@ namespace Game.Penguins
         /// </summary>
         public void StartGame()
         {
-
+            CurrentPlayer = Players[0];
         }
 
         /// <summary>

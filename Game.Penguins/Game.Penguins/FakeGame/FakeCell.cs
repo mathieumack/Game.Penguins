@@ -14,6 +14,13 @@ namespace Game.Penguins
             CurrentPenguin = new FakePenguin();
         }
 
+        public FakeCell(CellType cellType, int fishCount, IPenguin currentPenguin)
+        {
+            CellType = cellType;
+            FishCount = fishCount;
+            CurrentPenguin = currentPenguin;
+        }
+
         /// <summary>
         /// Type of the cell
         /// </summary>

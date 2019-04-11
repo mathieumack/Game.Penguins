@@ -13,6 +13,7 @@ namespace Game.Penguins
         {
             Name = playerName;
             PlayerType = playerType;
+            Identifier = Guid.NewGuid();
         }
 
         public FakePlayer()

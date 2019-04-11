@@ -148,6 +148,10 @@
       <Project>{80c125c4-2e4e-4ab0-a0a0-f084808683dd}</Project>
       <Name>Game.Penguins.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Game.Penguins.Helper\Game.Penguins.Helpers.csproj">
+      <Project>{a1071552-4b40-4e34-987e-3e0c21107154}</Project>
+      <Name>Game.Penguins.Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Ressources\pingouin.jpg" />
