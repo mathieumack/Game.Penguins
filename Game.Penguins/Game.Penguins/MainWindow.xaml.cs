@@ -13,7 +13,7 @@ namespace Game.Penguins
         {
             DataContext = new ApplicationViewModel();
             InitializeComponent();
-            ResourceLocator.SetColorScheme(Application.Current.Resources, _isDark ? ResourceLocator.LightColorScheme : ResourceLocator.DarkColorScheme);
+            ResourceLocator.SetColorScheme(Application.Current.Resources, ResourceLocator.DarkColorScheme);
         }
 
         private bool _isDark;
