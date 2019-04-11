@@ -45,7 +45,7 @@
                                 <Setter Property="BorderThickness" Value="1.2" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=IsSelectedSecond}" Value="True">
-                                <Setter Property="BorderBrush" Value="LawnGreen" />
+                                <Setter Property="BorderBrush" Value="LimeGreen" />
                                 <Setter Property="BorderThickness" Value="1.2" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -76,7 +76,32 @@
             </hx:HexList>
             <StackPanel Grid.Column="1">
                 <StackPanel Margin="10">
-                    <Label Content="Player :"></Label>
+                    <Label Content="Scores :"></Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Name" Grid.Column="0"></Label>
+                        <Label Content="Points" Grid.Column="1"></Label>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Players}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="{Binding PlayerName}" Grid.Column="0"></Label>
+                                    <Label Content="{Binding Points}" Grid.Column="1"></Label>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                <StackPanel Margin="10">
+                    <Label Content="Current player :"></Label>
                     <Label Content="{Binding CurrentPlayerName}"
                            Style="{StaticResource ItemGroupLabelStyle}"></Label>
                 </StackPanel>
@@ -92,9 +117,10 @@
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsMoveMyPenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's your turn."></Label>
-                    <Label Content="Select a penguin (from yours) on the map, then select a card destination."></Label>
-                    <Label Content="Once your selected origin and destination, clisk on the button below."></Label>
-                    <Button Command="{Binding PlacePenguinCommand}" Content="Move it !"></Button>
+                    <Label Content="Select a penguin (from yours) on the map first, then click on the button below :"></Label>
+                    <Button Command="{Binding MovePenguinSelectorCommand}" Content="Move it !"></Button>
+                    <Label Content="Next, select a card destination on the map and click on the button below :"></Label>
+                    <Button Command="{Binding MovePenguinValidationViewModel}" Content="Move it !"></Button>
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsMovePenguinAIAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's the turn of the next player (an AI)."></Label>

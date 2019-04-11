@@ -9,9 +9,9 @@ namespace Game.Penguins.Core.Interfaces.Game.Actions
         /// </summary>
         Guid PlayerIdenfifier { get; }
 
-        /// <summary>
-        /// Move done by the user
-        /// </summary>
-        IMove Move { get; }
+        ///// <summary>
+        ///// Move done by the user
+        ///// </summary>
+        //IMove Move { get; }
     }
 }

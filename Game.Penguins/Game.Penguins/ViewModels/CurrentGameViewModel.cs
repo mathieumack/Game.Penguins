@@ -6,6 +6,7 @@ using Game.Penguins.Framework;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Game.Penguins.ViewModels
 {
@@ -14,6 +15,8 @@ namespace Game.Penguins.ViewModels
         , IApplicationContentView
     {
         public ObservableCollection<CellViewModel> Cells { get; } = new ObservableCollection<CellViewModel>();
+
+        public ObservableCollection<PlayerViewModel> Players { get; } = new ObservableCollection<PlayerViewModel>();
 
         private readonly IGame game;
 
@@ -44,8 +47,15 @@ namespace Game.Penguins.ViewModels
             }
             set
             {
-                if (value == null)
+                if (value == null || game.CurrentPlayer.PlayerType != PlayerType.Human)
                     return;
+
+                //// Check that the select is valid :
+                //if (game.NextAction == NextActionType.MovePenguin && selectFirst && value.Cell.CellType != CellType.FishWithPenguin)
+                //    return;
+
+                //if (game.NextAction == NextActionType.MovePenguin && !selectFirst && value.Cell.CellType != CellType.Fish)
+                //    return;
 
                 // A cell is selected :
                 if (selectFirst)
@@ -161,6 +171,22 @@ namespace Game.Penguins.ViewModels
             }
         }
 
+        public MovePenguinSelectorViewModelCommand MovePenguinSelectorCommand
+        {
+            get
+            {
+                return new MovePenguinSelectorViewModelCommand(this);
+            }
+        }
+
+        public MovePenguinValidationViewModel MovePenguinValidationViewModel
+        {
+            get
+            {
+                return new MovePenguinValidationViewModel(this);
+            }
+        }
+
         public void PlayPlacePenguinHuman()
         {
             game.PlacePenguinManual(SelectedCell.X, SelectedCell.Y);
@@ -176,6 +202,29 @@ namespace Game.Penguins.ViewModels
                 game.Move();
 
             CheckActions();
+        }
+
+        public void SelectedOriginPenguin()
+        {
+            if (SelectedCell != null)
+            {
+                selectedFirst = SelectedCell;
+                selectFirst = false;
+            }
+        }
+
+        public void MovePenguinHuman()
+        {
+            if (SelectedCell != null)
+            {
+                selectedSecond = SelectedCell;
+                game.MoveManual(selectedFirst.Cell, selectedSecond.Cell);
+
+                selectedFirst = null;
+                selectedSecond = null;
+
+                CheckActions();
+            }
         }
 
         #endregion
@@ -196,7 +245,6 @@ namespace Game.Penguins.ViewModels
         private void Game_StateChanged(object sender, EventArgs e)
         {
             CheckActions();
-            CurrentPlayerName = game.CurrentPlayer.Name;
         }
 
         /// <summary>
@@ -208,7 +256,8 @@ namespace Game.Penguins.ViewModels
             // First we initialize the game object with players :
             foreach (var player in players)
             {
-                game.AddPlayer(player.PlayerName, player.PlayerType);
+                var createdPlayer = game.AddPlayer(player.PlayerName, player.PlayerType);
+                Players.Add(new PlayerViewModel(createdPlayer));
             }
 
             game.StartGame();
@@ -233,8 +282,15 @@ namespace Game.Penguins.ViewModels
         /// </summary>
         private void CheckActions()
         {
+            foreach (var cell in Cells)
+            {
+                cell.IsSelectedFirst = false;
+                cell.IsSelectedSecond = false;
+            }
+
             selectFirst = true;
-            SelectedCell = null;
+
+            CurrentPlayerName = game.CurrentPlayer.Name;
 
             IsPlacePenguinAIAction = game.NextAction == NextActionType.PlacePenguin && 
                                         game.CurrentPlayer.PlayerType != PlayerType.Human;
