@@ -85,7 +85,36 @@ namespace Game.Penguins
 
         public void MoveManual(ICell origin, ICell destination)
         {
-            throw new NotImplementedException();
+            Cell start = SearchCell(origin);
+            start.CellType = CellType.Water;
+            start.FishCount = 0;
+            start.CurrentPenguin = null;
+
+            Cell end = SearchCell(destination);
+            end.CellType = CellType.FishWithPenguin;
+            end.CurrentPenguin = new Penguins(CurrentPlayer);
+
+            NextAction = NextActionType.MovePenguin;
+            NextPlayer();
+            StateChanged(this, null);
+            start.ChangeState();
+            end.ChangeState();
+        }
+
+        public Cell SearchCell(ICell cellToFind)
+        {
+            for (int i = 0; i < Board.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.Board.GetLength(1); j++)
+                {
+                    if (Board.Board[i, j] == cellToFind)
+                    {
+                        return (Cell)Board.Board[i, j];
+                    }
+                }
+            }
+
+            return null;
         }
 
         public void PlacePenguin()
