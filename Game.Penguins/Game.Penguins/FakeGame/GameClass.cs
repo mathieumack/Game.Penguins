@@ -85,20 +85,23 @@ namespace Game.Penguins
 
         public void MoveManual(ICell origin, ICell destination)
         {
-            Cell start = SearchCell(origin);
-            start.CellType = CellType.Water;
-            start.FishCount = 0;
-            start.CurrentPenguin = null;
+            if (origin.CurrentPenguin.Player == CurrentPlayer && destination.CellType == CellType.Fish)
+            {
+                Cell start = SearchCell(origin);
+                start.CellType = CellType.Water;
+                start.FishCount = 0;
+                start.CurrentPenguin = null;
 
-            Cell end = SearchCell(destination);
-            end.CellType = CellType.FishWithPenguin;
-            end.CurrentPenguin = new Penguins(CurrentPlayer);
+                Cell end = SearchCell(destination);
+                end.CellType = CellType.FishWithPenguin;
+                end.CurrentPenguin = new Penguins(CurrentPlayer);
 
-            NextAction = NextActionType.MovePenguin;
-            NextPlayer();
-            StateChanged(this, null);
-            start.ChangeState();
-            end.ChangeState();
+                NextAction = NextActionType.MovePenguin;
+                NextPlayer();
+                StateChanged(this, null);
+                start.ChangeState();
+                end.ChangeState();
+            }
         }
 
         public Cell SearchCell(ICell cellToFind)
@@ -115,6 +118,46 @@ namespace Game.Penguins
             }
 
             return null;
+        }
+
+        public int[] SearchIndexOfCell(Cell cell)
+        {
+            int[] index = new int[2];
+
+            for (int i = 0; i < Board.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.Board.GetLength(1); j++)
+                {
+                    if (Board.Board[i, j] == cell)
+                    {
+                        index[0] = i;
+                        index[1] = j;
+
+                        return index;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public List<Cell> FindAvalaibleDeplacement(Cell origin, Cell destination)
+        {
+            List<Cell> avalaibleDeplacement = new List<Cell>();
+            int[] cellIndexOrigin = SearchIndexOfCell(origin);
+            int[] cellIndexDest = SearchIndexOfCell(destination);
+
+            for (int i = 0; i < Board.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.Board.GetLength(1); j++)
+                {
+                    if (i == cellIndexOrigin[0])
+                    {
+                        avalaibleDeplacement.Add((Cell)Board.Board[i, j]);
+                    }
+                    else if ()
+                }
+            }
         }
 
         public void PlacePenguin()
