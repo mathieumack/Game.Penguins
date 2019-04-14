@@ -35,7 +35,7 @@ namespace Game.Penguins
             if (Players.Count() == 2)
             {
                 PenguinsByPlayer = 4;
-            } 
+            }
             else if (Players.Count() == 3)
             {
                 PenguinsByPlayer = 3;
@@ -85,14 +85,26 @@ namespace Game.Penguins
 
         public void MoveManual(ICell origin, ICell destination)
         {
-            if (origin.CurrentPenguin.Player == CurrentPlayer && destination.CellType == CellType.Fish)
+            Cell start = SearchCell(origin);
+            Cell end = SearchCell(destination);
+
+            if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish)
             {
-                Cell start = SearchCell(origin);
+                List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
+                for (int i = 0; i < 3; i ++)
+                {
+                    for (int j = 0; j < avalaibleDeplacement[i].Count; j++)
+                    {
+                        avalaibleDeplacement[i][j].CellType = CellType.Water;
+                        avalaibleDeplacement[i][j].FishCount = 0;
+                        avalaibleDeplacement[i][j].ChangeState();
+                    }
+                }
+
                 start.CellType = CellType.Water;
                 start.FishCount = 0;
                 start.CurrentPenguin = null;
 
-                Cell end = SearchCell(destination);
                 end.CellType = CellType.FishWithPenguin;
                 end.CurrentPenguin = new Penguins(CurrentPlayer);
 
@@ -141,23 +153,201 @@ namespace Game.Penguins
             return null;
         }
 
-        public List<Cell> FindAvalaibleDeplacement(Cell origin, Cell destination)
+        public List<List<Cell>> FindAvalaibleDeplacement(Cell origin, Cell dest)
         {
-            List<Cell> avalaibleDeplacement = new List<Cell>();
+            List<List<Cell>> avalaibleDeplacement = new List<List<Cell>>();
             int[] cellIndexOrigin = SearchIndexOfCell(origin);
-            int[] cellIndexDest = SearchIndexOfCell(destination);
+
+            avalaibleDeplacement.Add(FindAvalaibleLigne(cellIndexOrigin));
+            avalaibleDeplacement.Add(FindAvalaibleDiagGauche(cellIndexOrigin));
+            avalaibleDeplacement.Add(FindAvalaibleDiagDroite(cellIndexOrigin));
+
+            avalaibleDeplacement = RemoveUnreachableCellInLigne(avalaibleDeplacement, cellIndexOrigin);
+
+            /* TODO Créer fonction RemoveUnreachableCellInDiagGauche & RemoveUnreachableCellInDiagDroite
+            avalaibleDeplacement = RemoveUnreachableCellInDiagGauche(avalaibleDeplacement, cellIndexOrigin);
+            avalaibleDeplacement = RemoveUnreachableCellInDiagDroite(avalaibleDeplacement, cellIndexOrigin);
+            */
+
+            return avalaibleDeplacement;
+        }
+
+        public List<List<Cell>> RemoveUnreachableCellInLigne(List<List<Cell>> avalaibleDeplacement, int[] cellIndexOrigin)
+        {
+            int[] rm = new int[2];
+            int[] rm1 = new int[2];
+
+            for (int i = (avalaibleDeplacement[0].Count - 1); i > 0; i--)
+            {
+                if (avalaibleDeplacement[0][i].CellType != CellType.Fish)
+                {
+                    if (SearchIndexOfCell(avalaibleDeplacement[0][i])[0] > cellIndexOrigin[0])
+                    {
+                        rm[0] = i;
+                        rm[1] = avalaibleDeplacement[0].Count - i;
+                    }
+                    else if (SearchIndexOfCell(avalaibleDeplacement[0][i])[0] < cellIndexOrigin[0])
+                    {
+                        rm1[0] = 0;
+                        rm1[1] = i + 1;
+                        i = 0;
+                    }
+                }
+            }
+
+            avalaibleDeplacement[0].RemoveRange(rm[0], rm[1]);
+            avalaibleDeplacement[0].RemoveRange(rm1[0], rm1[1]);
+
+            return avalaibleDeplacement;
+        }
+
+        public List<Cell> FindAvalaibleDiagGauche(int[] cellIndexOrigin)
+        {
+            List<Cell> deplacementDiagGauche = new List<Cell>();
 
             for (int i = 0; i < Board.Board.GetLength(0); i++)
             {
                 for (int j = 0; j < Board.Board.GetLength(1); j++)
                 {
-                    if (i == cellIndexOrigin[0])
+                    if ((j % 2 == 0 && cellIndexOrigin[1] % 2 == 0) || (j % 2 == 1 && cellIndexOrigin[1] % 2 == 1))
                     {
-                        avalaibleDeplacement.Add((Cell)Board.Board[i, j]);
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - ((cellIndexOrigin[1] - j) / 2))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + ((j - cellIndexOrigin[1]) / 2))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
                     }
-                    else if ()
+                    else if ((j % 2 == 1 && cellIndexOrigin[1] % 2 == 0))
+                    {
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - (Decimal.Floor((cellIndexOrigin[1] - j) / 2) + 1))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + (Decimal.Floor((j - cellIndexOrigin[1]) / 2)))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                    }
+                    else if ((j % 2 == 0 && cellIndexOrigin[1] % 2 == 1))
+                    {
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - (Decimal.Floor((cellIndexOrigin[1] - j) / 2)))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + (Decimal.Floor((j - cellIndexOrigin[1]) / 2) + 1))
+                            {
+                                deplacementDiagGauche.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                    }
                 }
             }
+
+            return deplacementDiagGauche;
+        }
+
+        public List<Cell> FindAvalaibleDiagDroite(int[] cellIndexOrigin)
+        {
+            List<Cell> deplacementDiagDroite = new List<Cell>();
+
+            for (int i = 0; i < Board.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.Board.GetLength(1); j++)
+                {
+                    if ((j % 2 == 0 && cellIndexOrigin[1] % 2 == 0) || (j % 2 == 1 && cellIndexOrigin[1] % 2 == 1))
+                    {
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + ((cellIndexOrigin[1] - j) / 2))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - ((j - cellIndexOrigin[1]) / 2))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                    }
+                    else if ((j % 2 == 1 && cellIndexOrigin[1] % 2 == 0))
+                    {
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + (Decimal.Floor((cellIndexOrigin[1] - j) / 2)))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - (Decimal.Floor((j - cellIndexOrigin[1]) / 2) + 1))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                    }
+                    else if ((j % 2 == 0 && cellIndexOrigin[1] % 2 == 1))
+                    {
+                        if (j < cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] + (Decimal.Floor((cellIndexOrigin[1] - j) / 2) + 1))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                        else if (j > cellIndexOrigin[1])
+                        {
+                            if (i == cellIndexOrigin[0] - (Decimal.Floor((j - cellIndexOrigin[1]) / 2)))
+                            {
+                                deplacementDiagDroite.Add((Cell)Board.Board[i, j]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            deplacementDiagDroite = deplacementDiagDroite.OrderByDescending(e => SearchIndexOfCell(e)[1]).ToList();
+            return deplacementDiagDroite;
+        }
+
+        public List<Cell> FindAvalaibleLigne(int[] cellIndexOrigin)
+        {
+            List<Cell> deplacementLigne = new List<Cell>();
+
+            for (int i = 0; i < Board.Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.Board.GetLength(1); j++)
+                {
+                    if (j == cellIndexOrigin[1] && i != cellIndexOrigin[0])
+                    {
+                        deplacementLigne.Add((Cell)Board.Board[i, j]);
+                    }
+                }
+            }
+
+            return deplacementLigne;
         }
 
         public void PlacePenguin()
@@ -168,19 +358,23 @@ namespace Game.Penguins
         public void PlacePenguinManual(int x, int y)
         {
             Cell cell = (Cell)Board.Board[x, y];
-            cell.CellType = CellType.FishWithPenguin;
-            cell.CurrentPenguin = new Penguins(CurrentPlayer);
 
-            NextAction = NextActionType.PlacePenguin;
-            if (Turn == Players.Count() * PenguinsByPlayer)
+            if (cell.FishCount == 1 && cell.CurrentPenguin == null)
             {
-                NextAction = NextActionType.MovePenguin;
-            }
+                cell.CellType = CellType.FishWithPenguin;
+                cell.CurrentPenguin = new Penguins(CurrentPlayer);
 
-            Turn++;
-            NextPlayer();
-            cell.ChangeState();
-            StateChanged.Invoke(this, null);
+                NextAction = NextActionType.PlacePenguin;
+                if (Turn == Players.Count() * PenguinsByPlayer)
+                {
+                    NextAction = NextActionType.MovePenguin;
+                }
+
+                Turn++;
+                NextPlayer();
+                cell.ChangeState();
+                StateChanged.Invoke(this, null);
+            }
         }
 
         public void StartGame()
