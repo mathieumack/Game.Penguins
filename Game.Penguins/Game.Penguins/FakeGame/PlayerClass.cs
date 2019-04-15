@@ -33,5 +33,10 @@ namespace Game.Penguins
             Points = 0;
             Penguins = 4;
         }
+
+        public void ChangeState()
+        {
+            StateChanged.Invoke(this, null);
+        }
     }
 }

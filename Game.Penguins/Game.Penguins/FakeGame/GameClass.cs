@@ -87,19 +87,13 @@ namespace Game.Penguins
         {
             Cell start = SearchCell(origin);
             Cell end = SearchCell(destination);
+            List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
 
-            if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish)
+            if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, destination))
             {
-                List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
-                for (int i = 0; i < 3; i ++)
-                {
-                    for (int j = 0; j < avalaibleDeplacement[i].Count; j++)
-                    {
-                        avalaibleDeplacement[i][j].CellType = CellType.Water;
-                        avalaibleDeplacement[i][j].FishCount = 0;
-                        avalaibleDeplacement[i][j].ChangeState();
-                    }
-                }
+                PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
+                currentPlayer.Points += start.FishCount;
+                currentPlayer.ChangeState();
 
                 start.CellType = CellType.Water;
                 start.FishCount = 0;
@@ -114,6 +108,19 @@ namespace Game.Penguins
                 start.ChangeState();
                 end.ChangeState();
             }
+        }
+
+        public bool IsInAvalaibleDeplacement(List<List<Cell>> avalaibleDeplacement, ICell destination)
+        {
+            for (int i = 0; i < avalaibleDeplacement.Count; i++)
+            {
+                if (avalaibleDeplacement[i].Exists(e => e == destination))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public Cell SearchCell(ICell cellToFind)
@@ -163,11 +170,8 @@ namespace Game.Penguins
             avalaibleDeplacement.Add(FindAvalaibleDiagDroite(cellIndexOrigin));
 
             avalaibleDeplacement = RemoveUnreachableCellInLigne(avalaibleDeplacement, cellIndexOrigin);
-
-            /* TODO Créer fonction RemoveUnreachableCellInDiagGauche & RemoveUnreachableCellInDiagDroite
             avalaibleDeplacement = RemoveUnreachableCellInDiagGauche(avalaibleDeplacement, cellIndexOrigin);
             avalaibleDeplacement = RemoveUnreachableCellInDiagDroite(avalaibleDeplacement, cellIndexOrigin);
-            */
 
             return avalaibleDeplacement;
         }
@@ -197,6 +201,64 @@ namespace Game.Penguins
 
             avalaibleDeplacement[0].RemoveRange(rm[0], rm[1]);
             avalaibleDeplacement[0].RemoveRange(rm1[0], rm1[1]);
+
+            return avalaibleDeplacement;
+        }
+
+        public List<List<Cell>> RemoveUnreachableCellInDiagGauche(List<List<Cell>> avalaibleDeplacement, int[] cellIndexOrigin)
+        {
+            int[] rm = new int[2];
+            int[] rm1 = new int[2];
+
+            for (int i = (avalaibleDeplacement[1].Count - 1); i > 0; i--)
+            {
+                if (avalaibleDeplacement[1][i].CellType != CellType.Fish)
+                {
+                    if (SearchIndexOfCell(avalaibleDeplacement[1][i])[1] > cellIndexOrigin[1])
+                    {
+                        rm[0] = i;
+                        rm[1] = avalaibleDeplacement[1].Count - i;
+                    }
+                    else if (SearchIndexOfCell(avalaibleDeplacement[1][i])[1] < cellIndexOrigin[1])
+                    {
+                        rm1[0] = 0;
+                        rm1[1] = i + 1;
+                        i = 0;
+                    }
+                }
+            }
+
+            avalaibleDeplacement[1].RemoveRange(rm[0], rm[1]);
+            avalaibleDeplacement[1].RemoveRange(rm1[0], rm1[1]);
+
+            return avalaibleDeplacement;
+        }
+
+        public List<List<Cell>> RemoveUnreachableCellInDiagDroite(List<List<Cell>> avalaibleDeplacement, int[] cellIndexOrigin)
+        {
+            int[] rm = new int[2];
+            int[] rm1 = new int[2];
+
+            for (int i = (avalaibleDeplacement[2].Count - 1); i > 0; i--)
+            {
+                if (avalaibleDeplacement[2][i].CellType != CellType.Fish)
+                {
+                    if (SearchIndexOfCell(avalaibleDeplacement[2][i])[1] < cellIndexOrigin[1])
+                    {
+                        rm[0] = i;
+                        rm[1] = avalaibleDeplacement[2].Count - i;
+                    }
+                    else if (SearchIndexOfCell(avalaibleDeplacement[2][i])[1] > cellIndexOrigin[1])
+                    {
+                        rm1[0] = 0;
+                        rm1[1] = i + 1;
+                        i = 0;
+                    }
+                }
+            }
+
+            avalaibleDeplacement[2].RemoveRange(rm[0], rm[1]);
+            avalaibleDeplacement[2].RemoveRange(rm1[0], rm1[1]);
 
             return avalaibleDeplacement;
         }
