@@ -100,10 +100,18 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-                <StackPanel Margin="10">
+                <StackPanel Margin="10" HorizontalAlignment="Center">
                     <Label Content="Current player :"></Label>
                     <Label Content="{Binding CurrentPlayerName}"
-                           Style="{StaticResource ItemGroupLabelStyle}"></Label>
+                           Style="{StaticResource ItemGroupLabelStyle}" Margin="10"></Label>
+                    <Image Source="/Ressources/blue.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsBlue, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                    <Image Source="/Ressources/red.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsRed, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                    <Image Source="/Ressources/yellow.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsYellow, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                    <Image Source="/Ressources/green.png" Stretch="UniformToFill" Width="50" Height="50"
+                                Visibility="{Binding Path=IsGreen, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="Place your penguin on the map by selecting a card."></Label>
