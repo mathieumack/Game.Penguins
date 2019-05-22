@@ -414,7 +414,42 @@ namespace Game.Penguins
 
         public void PlacePenguin()
         {
-            throw new NotImplementedException();
+			if (CurrentPlayer.PlayerType==PlayerType.AIMedium)
+			{
+				/// Choix aleatoire de la case.
+				Random r = new Random();
+				int x;
+				int y;
+				Cell cell;
+
+				bool penguinPlaced = false;
+
+				while (!penguinPlaced)
+				{
+					x = r.Next(0, 7);
+					y = r.Next(0, 7);
+
+					cell = (Cell)Board.Board[x, y];
+
+					if (cell.FishCount == 1 && cell.CurrentPenguin == null)
+					{
+						cell.CellType = CellType.FishWithPenguin;
+						cell.CurrentPenguin = new Penguins(CurrentPlayer);
+
+						NextAction = NextActionType.PlacePenguin;
+						if (Turn == Players.Count() * PenguinsByPlayer)
+						{
+							NextAction = NextActionType.MovePenguin;
+						}
+
+						Turn++;
+						NextPlayer();
+						cell.ChangeState();
+						StateChanged.Invoke(this, null);
+						penguinPlaced = true;
+					}
+				}
+			}
         }
 
         public void PlacePenguinManual(int x, int y)
