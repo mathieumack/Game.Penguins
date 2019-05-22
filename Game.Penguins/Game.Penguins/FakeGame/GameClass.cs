@@ -30,6 +30,8 @@ namespace Game.Penguins
 
         public int Turn { get; set; }
 
+        public List<Cell> AIPenguins { get; set; }
+
         public int NumberOfPenguins()
         {
             if (Players.Count() == 2)
@@ -80,7 +82,38 @@ namespace Game.Penguins
 
         public void Move()
         {
-            throw new NotImplementedException();
+            bool movePenguins = false;
+
+            while (!movePenguins)
+            {
+                Random rnd = new Random();
+
+                Cell start = SearchCell(AIPenguins[rnd.Next(0, PenguinsByPlayer)]);
+                Cell end = SearchCell(Board.Board[rnd.Next(0, 8), rnd.Next(0, 8)]);
+                List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
+
+                if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, end))
+                {
+                    PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
+                    currentPlayer.Points += start.FishCount;
+                    currentPlayer.ChangeState();
+
+                    start.CellType = CellType.Water;
+                    start.FishCount = 0;
+                    start.CurrentPenguin = null;
+
+                    end.CellType = CellType.FishWithPenguin;
+                    end.CurrentPenguin = new Penguins(CurrentPlayer);
+
+                    NextAction = NextActionType.MovePenguin;
+                    NextPlayer();
+                    StateChanged(this, null);
+                    start.ChangeState();
+                    end.ChangeState();
+
+                    movePenguins = true;
+                }
+            }
         }
 
         public void MoveManual(ICell origin, ICell destination)
@@ -447,6 +480,7 @@ namespace Game.Penguins
 						cell.ChangeState();
 						StateChanged.Invoke(this, null);
 						penguinPlaced = true;
+                        AIPenguins.Add(cell);
 					}
 				}
 			}
@@ -479,6 +513,7 @@ namespace Game.Penguins
             Turn = 1;
             CurrentPlayer = Players[0];
             PenguinsByPlayer = NumberOfPenguins();
+            AIPenguins = new List<Cell>();
             NextAction = NextActionType.PlacePenguin;
             StateChanged.Invoke(this, null);
         }
