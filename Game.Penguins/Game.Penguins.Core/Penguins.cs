@@ -8,7 +8,7 @@ using Game.Penguins.Core.Interfaces.Game.Players;
 
 namespace Game.Penguins
 {
-    class Penguins : IPenguin
+    public class Penguins : IPenguin
     {
         public Penguins(IPlayer player)
         {

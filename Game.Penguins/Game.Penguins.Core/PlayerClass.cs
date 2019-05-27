@@ -7,7 +7,7 @@ using Game.Penguins.Core.Interfaces.Game.Players;
 
 namespace Game.Penguins
 {
-    class PlayerClass : IPlayer
+    public class PlayerClass : IPlayer
     {
         public Guid Identifier { get; set; }
 

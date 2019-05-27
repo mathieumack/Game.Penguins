@@ -72,11 +72,7 @@
     <Compile Include="Commands\PlacePenguinViewModelCommand.cs" />
     <Compile Include="Commands\PlayAIViewModelCommand.cs" />
     <Compile Include="Extensions\ToPlayerTypeExtension.cs" />
-    <Compile Include="FakeGame\BoardClass.cs" />
-    <Compile Include="FakeGame\Cell.cs" />
     <Compile Include="FakeGame\GameClass.cs" />
-    <Compile Include="FakeGame\Penguins.cs" />
-    <Compile Include="FakeGame\PlayerClass.cs" />
     <Compile Include="Framework\Command.cs" />
     <Compile Include="Framework\ViewModel.cs" />
     <Compile Include="Framework\ViewModelCommand.cs" />
