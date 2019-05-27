@@ -83,7 +83,30 @@ namespace Game.Penguins
 
         public void Move()
         {
+            bool endGame = false;
 
+            if (CurrentPlayer.PlayerType == PlayerType.AIEasy)
+            {
+                endGame = IA_facile.MovePenguins((BoardClass)Board, (PlayerClass)CurrentPlayer);
+            }
+
+            if (!endGame)
+            {
+                NextAction = NextActionType.MovePenguin;
+                NextPlayer();
+            } else
+            {
+                NextPlayer();
+                endGame = false;
+
+                while (!endGame) {
+                    endGame = IA_facile.MovePenguins((BoardClass)Board, (PlayerClass)CurrentPlayer);
+                }
+
+                NextAction = NextActionType.Nothing;
+            }
+
+            StateChanged(this, null);
         }
 
         public void MoveManual(ICell origin, ICell destination)
@@ -92,7 +115,7 @@ namespace Game.Penguins
             Cell end = SearchCell(destination);
             List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
 
-            if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, destination))
+            if (start.CurrentPenguin != null && start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, destination))
             {
                 PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
                 currentPlayer.Points += start.FishCount;
