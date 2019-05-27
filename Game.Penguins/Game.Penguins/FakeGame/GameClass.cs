@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Game.Penguins.Core.Interfaces.Game.GameBoard;
+using Game.Penguins.Core.Interfaces.Game.Players;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.Penguins.Core.Interfaces.Game.GameBoard;
-using Game.Penguins.Core.Interfaces.Game.Players;
 
 namespace Game.Penguins
 {
@@ -30,22 +28,22 @@ namespace Game.Penguins
 
 		public int Turn { get; set; }
 
-        public List<Cell> AIPenguins { get; set; }
+		public Dictionary<IPlayer, List<Cell>> AIPenguins { get; set; }
 
-        public int NumberOfPenguins()
-        {
-            if (Players.Count() == 2)
-            {
-                PenguinsByPlayer = 4;
-            }
-            else if (Players.Count() == 3)
-            {
-                PenguinsByPlayer = 3;
-            }
-            else if (Players.Count() == 4)
-            {
-                PenguinsByPlayer = 2;
-            }
+		public int NumberOfPenguins()
+		{
+			if (Players.Count() == 2)
+			{
+				PenguinsByPlayer = 4;
+			}
+			else if (Players.Count() == 3)
+			{
+				PenguinsByPlayer = 3;
+			}
+			else if (Players.Count() == 4)
+			{
+				PenguinsByPlayer = 2;
+			}
 
 			return PenguinsByPlayer;
 		}
@@ -80,41 +78,47 @@ namespace Game.Penguins
 			}
 		}
 
-        public void Move()
-        {
-            bool movePenguins = false;
+		public void Move()
+		{
+			//throw new NotImplementedException();
+			bool movePenguins = false;
+			int temoin = 0;
 
-            while (!movePenguins)
-            {
-                Random rnd = new Random();
+			
+			do
+			{
+				Random rnd = new Random();
 
-                Cell start = SearchCell(AIPenguins[rnd.Next(0, PenguinsByPlayer)]);
-                Cell end = SearchCell(Board.Board[rnd.Next(0, 8), rnd.Next(0, 8)]);
-                List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
+				Cell start = SearchCell(AIPenguins[CurrentPlayer][rnd.Next(0, CurrentPlayer.Penguins)]);
+				Cell end = SearchCell(Board.Board[rnd.Next(0, 8), rnd.Next(0, 8)]);
+				List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
 
-                if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, end))
-                {
-                    PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
-                    currentPlayer.Points += start.FishCount;
-                    currentPlayer.ChangeState();
+				if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, end))
+				{
+					PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
+					currentPlayer.Points += start.FishCount;
+					currentPlayer.ChangeState();
 
-                    start.CellType = CellType.Water;
-                    start.FishCount = 0;
-                    start.CurrentPenguin = null;
+					start.CellType = CellType.Water;
+					start.FishCount = 0;
+					start.CurrentPenguin = null;
 
-                    end.CellType = CellType.FishWithPenguin;
-                    end.CurrentPenguin = new Penguins(CurrentPlayer);
+					end.CellType = CellType.FishWithPenguin;
+					end.CurrentPenguin = new Penguins(CurrentPlayer);
 
-                    NextAction = NextActionType.MovePenguin;
-                    NextPlayer();
-                    StateChanged(this, null);
-                    start.ChangeState();
-                    end.ChangeState();
+					NextAction = NextActionType.MovePenguin;
+					NextPlayer();
+					StateChanged(this, null);
+					start.ChangeState();
+					end.ChangeState();
+					AIPenguins[currentPlayer].Remove(start);
+					AIPenguins[currentPlayer].Add(end);
+					movePenguins = true;
 
-                    movePenguins = true;
-                }
-            }
-        }
+					Console.WriteLine("Éxecuté {0} fois", temoin++);
+				} 
+			}while (!movePenguins);
+		}
 
 		public void MoveManual(ICell origin, ICell destination)
 		{
@@ -169,6 +173,7 @@ namespace Game.Penguins
 				}
 			}
 
+			throw new Exception("Error during cell search");
 			return null;
 		}
 
@@ -192,11 +197,6 @@ namespace Game.Penguins
 
 			return null;
 		}
-
-		/// <summary>
-		/// Find all penguins for current player
-		/// </summary>
-		/// <returns></returns>
 
 		public List<List<Cell>> FindAvalaibleDeplacement(Cell origin, Cell dest)
 		{
@@ -481,11 +481,11 @@ namespace Game.Penguins
 						}
 
 						Turn++;
+						AIPenguins[CurrentPlayer].Add(cell);
 						NextPlayer();
 						cell.ChangeState();
 						StateChanged.Invoke(this, null);
 						penguinPlaced = true;
-                        AIPenguins.Add(cell);
 					}
 				}
 			}
@@ -513,15 +513,27 @@ namespace Game.Penguins
 			}
 		}
 
-        public void StartGame()
-        {
-            Turn = 1;
-            CurrentPlayer = Players[0];
-            PenguinsByPlayer = NumberOfPenguins();
-            AIPenguins = new List<Cell>();
-            NextAction = NextActionType.PlacePenguin;
-            StateChanged.Invoke(this, null);
-        }
+		public void InitAiPenguins()
+		{
+			AIPenguins = new Dictionary<IPlayer, List<Cell>>();
+			foreach (var item in Players)
+			{
+				if (item.PlayerType != PlayerType.Human)
+				{
+					AIPenguins.Add(item, new List<Cell>());
+				}
+			}
+		}
+
+		public void StartGame()
+		{
+			Turn = 1;
+			CurrentPlayer = Players[0];
+			PenguinsByPlayer = NumberOfPenguins();
+			InitAiPenguins();
+			NextAction = NextActionType.PlacePenguin;
+			StateChanged.Invoke(this, null);
+		}
 
 		public void NextPlayer()
 		{
