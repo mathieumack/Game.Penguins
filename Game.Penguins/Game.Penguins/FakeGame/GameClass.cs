@@ -14,6 +14,7 @@ namespace Game.Penguins
         {
             Players = new List<IPlayer>();
             Board = new BoardClass();
+            IA_facile = new IA_Facile();
         }
 
         public IBoard Board { get; set; }
@@ -21,6 +22,8 @@ namespace Game.Penguins
         public NextActionType NextAction { get; set; }
 
         public IPlayer CurrentPlayer { get; set; }
+
+        public IA_Facile IA_facile { get; set; }
 
         public IList<IPlayer> Players { get; set; }
 
@@ -80,7 +83,30 @@ namespace Game.Penguins
 
         public void Move()
         {
-            throw new NotImplementedException();
+            bool endGame = false;
+
+            if (CurrentPlayer.PlayerType == PlayerType.AIEasy)
+            {
+                endGame = IA_facile.MovePenguins((BoardClass)Board, (PlayerClass)CurrentPlayer);
+            }
+
+            if (!endGame)
+            {
+                NextAction = NextActionType.MovePenguin;
+                NextPlayer();
+            } else
+            {
+                NextPlayer();
+                endGame = false;
+
+                while (!endGame) {
+                    endGame = IA_facile.MovePenguins((BoardClass)Board, (PlayerClass)CurrentPlayer);
+                }
+
+                NextAction = NextActionType.Nothing;
+            }
+
+            StateChanged(this, null);
         }
 
         public void MoveManual(ICell origin, ICell destination)
@@ -89,7 +115,7 @@ namespace Game.Penguins
             Cell end = SearchCell(destination);
             List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(start, end);
 
-            if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, destination))
+            if (start.CurrentPenguin != null && start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, destination))
             {
                 PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
                 currentPlayer.Points += start.FishCount;
@@ -414,7 +440,20 @@ namespace Game.Penguins
 
         public void PlacePenguin()
         {
-            throw new NotImplementedException();
+            if (CurrentPlayer.PlayerType == PlayerType.AIEasy)
+            {
+                IA_facile.PlacePenguins((BoardClass)Board, (PlayerClass)CurrentPlayer);
+            }
+
+            NextAction = NextActionType.PlacePenguin;
+            if (Turn == Players.Count() * PenguinsByPlayer)
+            {
+                NextAction = NextActionType.MovePenguin;
+            }
+
+            Turn++;
+            NextPlayer();
+            StateChanged.Invoke(this, null);
         }
 
         public void PlacePenguinManual(int x, int y)
