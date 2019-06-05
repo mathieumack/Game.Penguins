@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Game.Penguins.Views"
                     xmlns:hx="clr-namespace:HexGridControl;assembly=HexGridControl"   
                     xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
                     xmlns:viewModels="clr-namespace:Game.Penguins.ViewModels">
@@ -48,6 +47,10 @@
                                 <Setter Property="BorderBrush" Value="LimeGreen" />
                                 <Setter Property="BorderThickness" Value="1.2" />
                             </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="DarkSlateBlue"/>
+                                <Setter Property="BorderThickness" Value="1.3" />
+                            </Trigger>
                         </Style.Triggers>
                     </Style>
                 </hx:HexList.ItemContainerStyle>
@@ -115,8 +118,8 @@
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsPlacePenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="Place your penguin on the map by selecting a card."></Label>
-                    <Label Content="Then click on the button below :."></Label>
-                    <Button Command="{Binding PlacePenguinCommand}" Content="Place"></Button>
+                    <!--<Label Content="Then click on the button below :."></Label>
+                    <Button Command="{Binding PlacePenguinCommand}" Content="Place"></Button>-->
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsPlacePenguinAIAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="The AI must place his penguin."></Label>
@@ -125,10 +128,10 @@
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsMoveMyPenguinAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's your turn."></Label>
-                    <Label Content="Select a penguin (from yours) on the map first, then click on the button below :"></Label>
-                    <Button Command="{Binding MovePenguinSelectorCommand}" Content="Move it !"></Button>
+                    <Label Content="Select a penguin (from yours) on the map first, then select the destination cell."></Label>
+                    <!--<Button Command="{Binding MovePenguinSelectorCommand}" Content="Move it !"></Button>
                     <Label Content="Next, select a card destination on the map and click on the button below :"></Label>
-                    <Button Command="{Binding MovePenguinValidationViewModel}" Content="Move it !"></Button>
+                    <Button Command="{Binding MovePenguinValidationViewModel}" Content="Move it !"></Button>-->
                 </StackPanel>
                 <StackPanel Visibility="{Binding Path=IsMovePenguinAIAction, Converter={StaticResource VisibleIfTrueConverter}}">
                     <Label Content="It's the turn of the next player (an AI)."></Label>

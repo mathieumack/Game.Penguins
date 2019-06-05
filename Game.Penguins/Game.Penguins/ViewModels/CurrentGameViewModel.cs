@@ -47,17 +47,19 @@ namespace Game.Penguins.ViewModels
             }
             set
             {
-                if (value == null || game.CurrentPlayer.PlayerType != PlayerType.Human)
+                if (value == null || game.CurrentPlayer.PlayerType != PlayerType.Human || game.NextAction == NextActionType.Nothing)
                     return;
 
-                //// Check that the select is valid :
-                //if (game.NextAction == NextActionType.MovePenguin && selectFirst && value.Cell.CellType != CellType.FishWithPenguin)
-                //    return;
+                // Check that the select is valid :
+                if (game.NextAction == NextActionType.MovePenguin && selectFirst && value.Cell.CellType != CellType.FishWithPenguin)
+                    return;
 
-                //if (game.NextAction == NextActionType.MovePenguin && !selectFirst && value.Cell.CellType != CellType.Fish)
-                //    return;
+                if (game.NextAction == NextActionType.MovePenguin && selectFirst && value.Cell.CellType == CellType.FishWithPenguin && value.Cell.CurrentPenguin.Player.Identifier != game.CurrentPlayer.Identifier)
+                    return;
 
-                // A cell is selected :
+                if (game.NextAction == NextActionType.MovePenguin && !selectFirst && value.Cell.CellType != CellType.Fish)
+                    return;
+
                 if (selectFirst)
                 {
                     if (selectedFirst != null)
@@ -73,6 +75,18 @@ namespace Game.Penguins.ViewModels
 
                     value.IsSelectedSecond = true;
                     selectedSecond = value;
+                }
+
+                // A cell is selected :
+                if (game.NextAction == NextActionType.PlacePenguin)
+                    PlacePenguinCommand.Execute(null);
+                else if (game.NextAction == NextActionType.MovePenguin && value.IsSelectedSecond)
+                {
+                    MovePenguinValidationViewModel.Execute(null);
+                }
+                else if (game.NextAction == NextActionType.MovePenguin && value.IsSelectedFirst)
+                {
+                    MovePenguinSelectorCommand.Execute(null);
                 }
             }
         }
