@@ -151,7 +151,7 @@ namespace Game.Penguins
         /// <returns></returns>
         public static bool CanPlacePenguin(this Cell[,] board, int x, int y)
         {
-            return board[x, y].CellType != CellType.Fish && board[x, y].FishCount == 3;
+            return board[x, y].CellType == CellType.Fish && board[x, y].FishCount != 3;
         }
     }
 
