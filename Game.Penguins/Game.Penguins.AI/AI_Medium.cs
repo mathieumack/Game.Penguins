@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Game.Penguins.Core.Interfaces.Game.GameBoard;
+using Game.Penguins.Core.Interfaces.Game.Players;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.Penguins.Core.Interfaces.Game.GameBoard;
-using Game.Penguins.Core.Interfaces.Game.Players;
 
 
 namespace Game.Penguins
@@ -91,7 +89,7 @@ namespace Game.Penguins
 
 			return null;
 		}
-		private List<List<Cell>> RemoveUnreachableCellInLigne(IBoard Board, List<List<Cell>> avalaibleDeplacement, int[] cellIndexOrigin)
+		public List<List<Cell>> RemoveUnreachableCellInLigne(IBoard Board, List<List<Cell>> avalaibleDeplacement, int[] cellIndexOrigin)
 		{
 			int[] rm = new int[2];
 			int[] rm1 = new int[2];
@@ -321,104 +319,29 @@ namespace Game.Penguins
 
 			return deplacementLigne;
 		}
-		private bool RemovePenguins(IBoard Board, Cell origin, PlayerClass currentPlayer)
-		{
-			int[] originIndex = SearchIndexOfCell(Board, origin);
-			int x = originIndex[0];
-			int y = originIndex[1];
-			bool token = false;
-			Console.Write("penguin in cell [{0},{1}]", x, y);
-
-			if (y>0)
-			{
-				if (Board.Board[x, y - 1].CurrentPenguin != null || Board.Board[x, y - 1].CellType == CellType.Water)
-				{
-					token = true;
-				}
-			}
-			if (y<7)
-			{
-				if (Board.Board[x, y + 1].CurrentPenguin != null || Board.Board[x, y + 1].CellType == CellType.Water)
-				{
-					token = true;
-				}
-			}
-			if (x<7)
-			{
-				if (Board.Board[x + 1, y].CurrentPenguin != null || Board.Board[x+1, y].CellType == CellType.Water)
-				{
-					token = true;
-				}
-			}
-			if (x>0)
-			{
-				if (Board.Board[x - 1, y].CurrentPenguin != null || Board.Board[x-1, y].CellType == CellType.Water)
-				{
-					token = true;
-				}
-			}
-			if (y%2 != 0) /// line number is odd
-			{
-				if (x < 7 && y > 0)
-				{
-					if (Board.Board[x + 1, y - 1].CurrentPenguin != null || Board.Board[x + 1, y - 1].CellType == CellType.Water)
-					{
-						token = true;
-					}
-				}
-				if (x < 7 && y < 7)
-				{
-					if (Board.Board[x + 1, y + 1].CurrentPenguin != null || Board.Board[x + 1, y + 1].CellType == CellType.Water)
-					{
-						token = true;
-					}
-				}
-			}
-			if (y%2 == 0) /// line number is even
-			{
-				if (x > 0 && y > 0)
-				{
-					if (Board.Board[x - 1, y - 1].CurrentPenguin != null || Board.Board[x - 1, y - 1].CellType == CellType.Water)
-					{
-						token = true;
-					}
-				}
-				if (x > 0 && y < 7)
-				{
-					if (Board.Board[x - 1, y + 1].CurrentPenguin != null || Board.Board[x - 1, y + 1].CellType == CellType.Water)
-					{
-						token = true;
-					}
-				}
-
-			}
-			if (token==true)
-			{
-				Console.WriteLine(" needs to be deleted");
-				currentPlayer.Penguins--;
-				//remove penguin
-			}
-			else
-			{
-				Console.WriteLine("doesn't need to be deleted");
-			}
-			return token;
-
-		}
 		public void Move(IBoard Board, IPlayer CurrentPlayer, Dictionary<IPlayer, List<Cell>> AIPenguins)
 		{
-			bool movePenguins = false;
+			bool movePenguins = false, check;
+			PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
 
 			do
 			{
-				int random = r.Next(0, CurrentPlayer.Penguins);
-				Cell start = SearchCell(Board, AIPenguins[CurrentPlayer][random]);
-				Cell end = SearchCell(Board, Board.Board[r.Next(0, 8), r.Next(0, 8)]);
-				List<List<Cell>> avalaibleDeplacement = FindAvalaibleDeplacement(Board, start, end);
+				Cell start;
+				Cell end;
+				List<List<Cell>> avalaibleDeplacement;
+				do
+				{
+					int random = r.Next(0, CurrentPlayer.Penguins - 1);
+					start = SearchCell(Board, AIPenguins[CurrentPlayer][random]);
+					end = SearchCell(Board, Board.Board[r.Next(0, 8), r.Next(0, 8)]);
+					avalaibleDeplacement = FindAvalaibleDeplacement(Board, start, end);
+					check = RemovePenguins(Board, start, currentPlayer, AIPenguins);
+				} while (!check);
+
+
 
 				if (start.CurrentPenguin.Player == CurrentPlayer && end.CellType == CellType.Fish && IsInAvalaibleDeplacement(avalaibleDeplacement, end))
 				{
-					PlayerClass currentPlayer = (PlayerClass)CurrentPlayer;
 					currentPlayer.Points += start.FishCount;
 					currentPlayer.ChangeState();
 
@@ -432,7 +355,7 @@ namespace Game.Penguins
 					start.ChangeState();
 					end.ChangeState();
 					AIPenguins[currentPlayer].Remove(start);
-					if (!RemovePenguins(Board, end, currentPlayer))
+					if (RemovePenguins(Board, end, currentPlayer, AIPenguins))
 					{
 						AIPenguins[currentPlayer].Add(end);
 					}
@@ -441,14 +364,13 @@ namespace Game.Penguins
 			} while (!movePenguins);
 
 		}
-		
 		public void PlacePenguin(IBoard Board, IPlayer CurrentPlayer, Dictionary<IPlayer, List<Cell>> AIPenguins)
 		{
 			List<Cell> AvailableCell = new List<Cell>();
 
 			foreach (Cell tempcell in Board.Board)
 			{
-				if (tempcell.FishCount==1)
+				if (tempcell.FishCount == 1)
 				{
 					AvailableCell.Add(tempcell);
 				}
@@ -472,10 +394,94 @@ namespace Game.Penguins
 				{
 					AvailableCell.Remove(cell);
 				}
-				
+
 
 			} while (!token);
-			
+
+
+		}
+		private bool RemovePenguins(IBoard Board, Cell origin, PlayerClass currentPlayer, Dictionary<IPlayer, List<Cell>> AIPenguins)
+		{
+			int[] originIndex = SearchIndexOfCell(Board, origin);
+			int x = originIndex[0];
+			int y = originIndex[1];
+			bool token = false;
+			if (y % 2 == 0)
+			{
+				Console.WriteLine("line number is even ({0})", y % 2);
+			}
+			else Console.WriteLine("line number is odd ({0})", y % 2);
+			Console.Write("penguin in cell [{0},{1}] for player {2} ", x, y, currentPlayer.Name);
+
+			if (y > 0 && !token)
+			{
+				Console.Write("type1: {0} ", Board.Board[x, y - 1].CellType);
+				if (Board.Board[x, y - 1].CellType != CellType.FishWithPenguin && Board.Board[x, y - 1].CellType != CellType.Water) token = true;
+				Console.Write(token + " ");
+			}
+			if (y < 7 && !token)
+			{
+				Console.Write("type2: {0} ", Board.Board[x, y + 1].CellType);
+				if (Board.Board[x, y + 1].CellType != CellType.FishWithPenguin && Board.Board[x, y + 1].CellType != CellType.Water) token = true;
+				Console.Write(token + " ");
+			}
+			if (x < 7 && !token)
+			{
+				Console.Write("type3: {0} ", Board.Board[x + 1, y].CellType);
+				if (Board.Board[x + 1, y].CellType != CellType.FishWithPenguin && Board.Board[x + 1, y].CellType != CellType.Water) token = true;
+				Console.Write(token + " ");
+			}
+			if (x > 0 && !token)
+			{
+				Console.Write("type4: {0} ", Board.Board[x - 1, y].CellType);
+				if (Board.Board[x - 1, y].CellType != CellType.FishWithPenguin && Board.Board[x - 1, y].CellType != CellType.Water) token = true;
+				Console.Write(token + " ");
+			}
+			if (y % 2 != 0 && !token) /// line number is odd
+			{
+				Console.Write("odd numbers: ");
+				if (x < 7 && y > 0)
+				{
+					Console.Write("type5: {0} ", Board.Board[x + 1, y - 1].CellType);
+					if (Board.Board[x + 1, y - 1].CellType != CellType.FishWithPenguin && Board.Board[x + 1, y - 1].CellType != CellType.Water) token = true;
+					Console.Write(token + " ");
+				}
+				if (x < 7 && y < 7 && !token)
+				{
+					Console.Write("type6: {0} ", Board.Board[x + 1, y + 1].CellType);
+					if (Board.Board[x + 1, y + 1].CellType != CellType.FishWithPenguin && Board.Board[x + 1, y + 1].CellType != CellType.Water) token = true;
+					Console.Write(token + " ");
+				}
+			}
+			if (y % 2 == 0 && !token) /// line number is even
+			{
+				Console.Write("even numbers: ");
+				if (x > 0 && y > 0)
+				{
+					Console.Write("type7: {0} ", Board.Board[x - 1, y - 1].CellType);
+					if (Board.Board[x - 1, y - 1].CellType != CellType.FishWithPenguin && Board.Board[x - 1, y - 1].CellType != CellType.Water) token = true;
+					Console.Write(token + " ");
+				}
+				if (x > 0 && y < 7 && !token)
+				{
+					Console.Write("type8: {0} ", Board.Board[x - 1, y + 1].CellType);
+					if (Board.Board[x - 1, y + 1].CellType != CellType.FishWithPenguin && Board.Board[x - 1, y + 1].CellType != CellType.Water) token = true;
+					Console.Write(token + " ");
+				}
+
+			}
+			if (!token)
+			{
+				Console.WriteLine(" needs to be deleted");
+				currentPlayer.Penguins--;
+				AIPenguins[currentPlayer].Remove(origin);
+				origin.CellType = CellType.Water;
+				origin.FishCount = 0;
+				origin.CurrentPenguin = null;
+				origin.ChangeState();
+			}
+			else Console.WriteLine(" doesn't need to be deleted");
+			return token;
 
 		}
 	}
