@@ -58,10 +58,9 @@
 
                                 <Label Content="Type :" Margin="{adonisUi:Space 0, 0, 3, 0}" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Text=""
-                                          IsEnabled="False"
                                           SelectedItem="{Binding Player1Type}"
                                           adonisExtensions:WatermarkExtension.Watermark="Select an option"
-                                          SelectedIndex="0"
+                                          SelectedIndex="1"
                                           Grid.Column="1">
                                     <ComboBox.Items>
                                         <ComboBoxItem Content="Human"/>

@@ -73,6 +73,7 @@
                                 Visibility="{Binding Path=IsYellow, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
                             <Image Source="/Ressources/green.png" Stretch="UniformToFill" Width="50" Height="50"
                                 Visibility="{Binding Path=IsGreen, Converter={StaticResource VisibleIfTrueConverter}}"></Image>
+                            <TextBlock Foreground="Black" Text="{Binding XY}" Visibility="Collapsed"></TextBlock>
                         </Grid>
                     </DataTemplate>
                 </hx:HexList.ItemTemplate>

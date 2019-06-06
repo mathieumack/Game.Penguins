@@ -10,6 +10,14 @@ namespace Game.Penguins.ViewModels
 
         public int Y { get; private set; }
 
+        public string XY
+        {
+            get
+            {
+                return X + ";" + Y;
+            }
+        }
+
         public ICell Cell { get; set; }
 
         public bool IsWater { get; private set; }
