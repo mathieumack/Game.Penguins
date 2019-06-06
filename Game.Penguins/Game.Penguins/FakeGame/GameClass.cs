@@ -96,6 +96,14 @@ namespace Game.Penguins
 		public void Move()
 		{
 			bool endGame = false;
+			foreach (var item in Players)
+			{
+				if (item.Penguins == 0)
+				{
+					endGame = true;
+				}
+			}
+
 
 			if (CurrentPlayer.PlayerType == PlayerType.AIEasy)
 			{
