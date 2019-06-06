@@ -1,5 +1,4 @@
-﻿using Game.Penguins.Core.Interfaces.Game.Actions;
-using Game.Penguins.Core.Interfaces.Game.GameBoard;
+﻿using Game.Penguins.Core.Interfaces.Game.GameBoard;
 using Game.Penguins.Core.Interfaces.Game.Players;
 using System;
 using System.Collections.Generic;
@@ -66,12 +65,28 @@ namespace Game.Penguins
         /// <param name="board"></param>
         /// <param name="origin"></param>
         /// <returns></returns>
+        public static IList<Cell> GetNearCells(this Cell[,] board, Cell origin)
+        {
+            var result = new List<Cell>();
+
+            for (int i = 0; i <= 5; i++)
+                result.AddRange(board.GetAvailableCells(origin, (Direction)i, false));
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="origin"></param>
+        /// <returns></returns>
         public static IList<Cell> GetAvailableCells(this Cell[,] board, Cell origin)
         {
             var result = new List<Cell>();
 
             for (int i = 0; i <= 5; i++)
-                result.AddRange(board.GetAvailableCells(origin, (Direction)i));
+                result.AddRange(board.GetAvailableCells(origin, (Direction)i, true));
 
             return result;
         }
@@ -82,8 +97,9 @@ namespace Game.Penguins
         /// <param name="board"></param>
         /// <param name="origin"></param>
         /// <param name="direction"></param>
+        /// <param name="searchChilds"></param>
         /// <returns></returns>
-        public static IList<Cell> GetAvailableCells(this Cell[,] board, Cell origin, Direction direction)
+        public static IList<Cell> GetAvailableCells(this Cell[,] board, Cell origin, Direction direction, bool searchChilds)
         {
             var result = new List<Cell>();
 
@@ -136,10 +152,33 @@ namespace Game.Penguins
             if (destination != null && destination.CellType == CellType.Fish)
             {
                 result.Add(destination);
-                result.AddRange(board.GetAvailableCells(destination, direction));
+                if(searchChilds)
+                    result.AddRange(board.GetAvailableCells(destination, direction, searchChilds));
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Return all cells that are near a cell with 3 fish
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="origin"></param>
+        /// <returns></returns>
+        public static IList<Cell> GetAvailableCellsAroundA3FishCell(this Cell[,] board)
+        {
+            var result = new List<Cell>();
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i, j].CellType == CellType.Fish && board[i, j].FishCount == 3)
+                        result.AddRange(board.GetNearCells(board[i, j]));
+                }
+            }
+
+            return result.Where(e => e.FishCount != 3).ToList();
         }
 
         /// <summary>
@@ -188,16 +227,12 @@ namespace Game.Penguins
         public void PlacePenguin()
         {
             // Place a penguin on the map for the IA :
-            var nextX = random.Next(0, 8);
-            var nextY = random.Next(0, 8);
+            // We try to place the penguin near a 3 fish point
+            var availableCells = Board.GetAvailableCellsAroundA3FishCell();
 
-            while (!Board.CanPlacePenguin(nextX, nextY))
-            {
-                nextX = random.Next(0, 8);
-                nextY = random.Next(0, 8);
-            }
-
-            game.PlacePenguinManual(nextX, nextY);
+            var selectedCell = availableCells[random.Next(0, availableCells.Count)];
+            
+            game.PlacePenguinManual(selectedCell.X, selectedCell.Y);
         }
 
         public Tuple<Cell,Cell> Move()
