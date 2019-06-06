@@ -13,6 +13,7 @@ namespace Game.Penguins
         {
             DataContext = new ApplicationViewModel();
             InitializeComponent();
+			_isDark = true;
         }
 
         private bool _isDark;
