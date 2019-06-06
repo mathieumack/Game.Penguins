@@ -204,15 +204,33 @@ namespace Game.Penguins
         {
             var cellswithPenguin = Board.GetMyPenguins(playerIdentifier);
 
-            // We try to select an available cell randmoly
-            for (int i = 0; i < cellswithPenguin.Count; i++)
+            var preferedCell = cellswithPenguin.Select(e => new
             {
-                var avalableCells = Board.GetAvailableCells(cellswithPenguin[i]);
-                if(avalableCells.Count > 0)
-                {
-                    var destination = avalableCells[random.Next(0, avalableCells.Count)];
-                    return new Tuple<Cell, Cell>(cellswithPenguin[i], destination);
-                }
+                Origin = e,
+                PreferedCell = GetPreferedCell(e)
+            })
+            .Where(e => e.PreferedCell != null)
+            .OrderByDescending(e => e.PreferedCell.FishCount)
+            .FirstOrDefault();
+            
+            return new Tuple<Cell, Cell>(preferedCell.Origin, preferedCell.PreferedCell);
+        }
+
+        private Cell GetPreferedCell(Cell origin)
+        {
+            var avalableCells = Board.GetAvailableCells(origin);
+
+            if (avalableCells.Count > 0)
+            {
+                // We search items with 3 fish first
+                if (avalableCells.Any(e => e.FishCount == 3))
+                    return avalableCells.FirstOrDefault(e => e.FishCount == 3);
+
+                if (avalableCells.Any(e => e.FishCount == 2))
+                    return avalableCells.FirstOrDefault(e => e.FishCount == 2);
+
+                // No prefered rules, we select randomly an available cell
+                return avalableCells[random.Next(0, avalableCells.Count)];
             }
 
             return null;
